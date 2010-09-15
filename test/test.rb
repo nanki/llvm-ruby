@@ -23,5 +23,6 @@ class BridgeTest < Test::Unit::TestCase
   def test_function
     func = @m.getOrInsertFunction("abc", LLVM::FunctionType.get(LLVM::Type.getVoidTy(@ctx), false))
     assert_equal "abc", func.getNameStr
+    assert_equal "abc", func.getName
   end
 end
