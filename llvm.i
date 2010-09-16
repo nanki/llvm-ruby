@@ -46,6 +46,12 @@ using namespace llvm;
 %ignore llvm::Pass::getAdjustedAnalysisPointer;
 %ignore llvm::GlobalValue::use_empty_except_constants;
 
+#define llvm_pointer_equality bool operator==(void* another) { return $self == another; }
+%extend llvm::LLVMContext {
+    llvm_pointer_equality
+}
+
+
 %include "llvm/ADT/ilist_node.h"
 
 %template(Ilist_node__BasicBlock) ::llvm::ilist_node<BasicBlock>;
