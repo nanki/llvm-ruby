@@ -16,7 +16,10 @@
 #include "llvm/Pass.h"
 #include "llvm/AbstractTypeUser.h"
 #include "llvm/LLVMContext.h"
+#include "llvm/ExecutionEngine/GenericValue.h"
+#include "llvm/ExecutionEngine/Executionengine.h"
 using namespace llvm;
+
 %}
 
 #define __STDC_CONSTANT_MACROS
@@ -39,12 +42,28 @@ using namespace llvm;
     $1 = TYPE($input) == T_STRING;
 }
 
+
+%inline {
+    inline static void check_null(void *m) {
+        if (m == NULL) {
+            SWIG_exception(SWIG_ValueError,"Expected llvm::Module.");
+        }
+    }
+}
+
+%typemap(check) llvm::Module * {
+    check_null($1);
+}
+
 %rename(to_type) operator Type*;
 
 %ignore *::refineAbstractType;
 %ignore *::typeBecameConcrete;
 %ignore llvm::Pass::getAdjustedAnalysisPointer;
 %ignore llvm::GlobalValue::use_empty_except_constants;
+
+// #lock= causes errors because SmartMutex::operator = is private.
+%ignore llvm::ExecutionEngine::lock;
 
 #define llvm_pointer_equality bool operator==(void* another) { return $self == another; }
 %extend llvm::LLVMContext {
@@ -73,3 +92,6 @@ using namespace llvm;
 %include "llvm/Module.h"
 %include "llvm/Pass.h"
 %include "llvm/LLVMContext.h"
+
+%include "llvm/ExecutionEngine/GenericValue.h"
+%include "llvm/ExecutionEngine/Executionengine.h"

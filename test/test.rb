@@ -25,4 +25,15 @@ class BridgeTest < Test::Unit::TestCase
     assert_equal "abc", func.getNameStr
     assert_equal "abc", func.getName
   end
+
+  def test_execution_engine
+    assert_raises ArgumentError do
+      LLVM::EngineBuilder.new(nil)
+    end
+
+    b = LLVM::EngineBuilder.new @m
+    assert_kind_of LLVM::EngineBuilder, b
+    e = b.create
+    assert_kind_of LLVM::ExecutionEngine, e
+  end
 end
