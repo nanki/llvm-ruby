@@ -26,6 +26,13 @@ class BridgeTest < Test::Unit::TestCase
     assert_equal "abc", func.getName
   end
 
+  def test_typevector
+    tv = LLVM::TypeVector.new
+    tv << LLVM::Type.getInt32Ty(@ctx)
+    tv << LLVM::Type.getInt8Ty(@ctx)
+    assert_kind_of LLVM::FunctionType, LLVM::FunctionType.get(LLVM::Type.getVoidTy(@ctx), tv, false)
+  end
+
   def test_execution_engine
     assert_raises ArgumentError do
       LLVM::EngineBuilder.new(nil)
@@ -35,5 +42,12 @@ class BridgeTest < Test::Unit::TestCase
     assert_kind_of LLVM::EngineBuilder, b
     e = b.create
     assert_kind_of LLVM::ExecutionEngine, e
+  end
+
+  def test_basic_block
+    main = @m.getOrInsertFunction("main", LLVM::FunctionType.get(LLVM::Type.getInt32Ty(@ctx), false))
+    b = LLVM::BasicBlock.Create(@ctx, LLVM::Twine.new("main"), main)
+    assert_kind_of LLVM::BasicBlock, b
+    assert_equal main, b.getParent
   end
 end

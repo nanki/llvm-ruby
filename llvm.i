@@ -43,6 +43,8 @@ using namespace llvm;
 }
 
 
+%template(TypeVector) std::vector<llvm::Type const *,std::allocator< llvm::Type const * > >;
+
 
 %{
     inline static void check_null(void *m) {
@@ -102,3 +104,5 @@ using namespace llvm;
 
 %include "llvm/ExecutionEngine/GenericValue.h"
 %include "llvm/ExecutionEngine/Executionengine.h"
+
+%include "llvm/ADT/Twine.h"
