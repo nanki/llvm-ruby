@@ -18,6 +18,10 @@
 #include "llvm/LLVMContext.h"
 #include "llvm/ExecutionEngine/GenericValue.h"
 #include "llvm/ExecutionEngine/Executionengine.h"
+
+#define IRBuilder ruby__IRBuilder
+#include "llvm/Support/IRBuilder.h"
+#undef IRBuilder
 using namespace llvm;
 
 %}
@@ -29,16 +33,16 @@ using namespace llvm;
 %include "std_string.i"
 
 // typemaps for StringRef
-%typemap(in) StringRef {
+%typemap(in) llvm::StringRef {
     $1 = StringRef(RSTRING_PTR($input), RSTRING_LEN($input));
 }
 
-%typemap(out) StringRef {
+%typemap(out) llvm::StringRef {
     $result = rb_str_new($1.data(), $1.size());
 }
 
 // for overloading in llvm/Module.h
-%typemap(typecheck) StringRef {
+%typemap(typecheck) llvm::StringRef {
     $1 = TYPE($input) == T_STRING;
 }
 
@@ -106,3 +110,10 @@ using namespace llvm;
 %include "llvm/ExecutionEngine/Executionengine.h"
 
 %include "llvm/ADT/Twine.h"
+
+#define IRBuilder ruby__IRBuilder
+%include "llvm/Support/IRBuilder.h"
+#undef IRBuilder
+
+%template(IRBuilderDefaultInserterPreserveNames) llvm::IRBuilderDefaultInserter<true>;
+%template(IRBuilder) llvm::ruby__IRBuilder<true>;
