@@ -32,6 +32,14 @@ using namespace llvm;
 %include "std_vector.i"
 %include "std_string.i"
 
+%typemap(in) uint64_t {
+    $1 = NUM2ULL($input);
+}
+
+%typemap(typecheck) uint64_t {
+    $1 = TYPE($input) == T_FIXNUM || TYPE($input) == T_BIGNUM;
+}
+
 // typemaps for StringRef
 %typemap(in) llvm::StringRef {
     $1 = StringRef(RSTRING_PTR($input), RSTRING_LEN($input));
@@ -108,6 +116,13 @@ using namespace llvm;
 
 %include "llvm/ExecutionEngine/GenericValue.h"
 %include "llvm/ExecutionEngine/Executionengine.h"
+
+%ignore llvm::APInt::Emit;
+%ignore llvm::APInt::Read;
+%ignore llvm::APInt::mu;
+%ignore llvm::APInt::ms;
+
+%include "llvm/ADT/APInt.h"
 
 %include "llvm/ADT/Twine.h"
 

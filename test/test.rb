@@ -50,4 +50,21 @@ class BridgeTest < Test::Unit::TestCase
     assert_kind_of LLVM::BasicBlock, b
     assert_equal main, b.getParent
   end
+
+  def test_APInt
+    ff = LLVM::APInt.new(8, 255)
+    assert_equal "-1", ff.toString(10, true)
+    assert_equal "255", ff.toString(10, false)
+
+    max_64 = 2**64 - 1
+
+    assert_equal "-1", LLVM::APInt.new(64, max_64).toString(10, true)
+    assert_equal "-1", LLVM::APInt.new(64, -1, true).toString(10, true)
+    assert_equal max_64.to_s, LLVM::APInt.new(64, max_64).toString(10, false)
+    assert_equal max_64.to_s, LLVM::APInt.new(64, -1).toString(10, false)
+
+    assert_raises RangeError do
+      LLVM::APInt.new(64, max_64 + 1)
+    end
+  end
 end
