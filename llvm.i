@@ -43,13 +43,14 @@ using namespace llvm;
 }
 
 
-%inline {
+
+%{
     inline static void check_null(void *m) {
         if (m == NULL) {
             SWIG_exception(SWIG_ValueError,"Expected llvm::Module.");
         }
     }
-}
+%}
 
 %typemap(check) llvm::Module * {
     check_null($1);
