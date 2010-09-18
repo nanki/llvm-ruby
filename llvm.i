@@ -55,6 +55,12 @@ using namespace llvm;
     check_null($1);
 }
 
+%extend llvm::Module {
+    %typemap(out) llvm::Constant * {
+        $result = SWIG_NewPointerObj(SWIG_as_voidptr($1), SWIGTYPE_p_llvm__Function, 0 |  0 );
+    }
+}
+
 %rename(to_type) operator Type*;
 
 %ignore *::refineAbstractType;
